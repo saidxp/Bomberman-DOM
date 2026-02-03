@@ -41,6 +41,10 @@ function startGame() {
 }
 
 function handleJoin(ws, nickname) {
+     if (nickname.length > 20) {
+          ws.sendEvent('joinError', 'Nickname length above 20 characters')
+          return;
+        }
     if (state.playerCount >= CONSTANTS.MAX_PLAYERS) {
         ws.sendEvent('joinError', 'Game is full');
         return;
@@ -51,7 +55,6 @@ function handleJoin(ws, nickname) {
     }
     if (state.activeNicknames.has(nickname)) {
         ws.sendEvent('joinError', 'Nickname is already taken');
-        ws.close();
         return;
     }
 
@@ -203,11 +206,15 @@ function handlePlaceBomb(ws) {
 
 function handleChat(ws, messageContent) {
     if (state.players[ws.id]) {
-        broadcast('chatMessage', {
-            nickname: state.players[ws.id].nickname,
-            message: messageContent,
-            timestamp: Date.now()
-        });
+        if(messageContent.length <= 50){
+            broadcast('chatMessage', {
+                nickname: state.players[ws.id].nickname,
+                message: messageContent,
+                timestamp: Date.now()
+            });
+        } else {
+            ws.sendEvent('joinError', 'Message length above 50 characters')
+        }
     }
 }
 

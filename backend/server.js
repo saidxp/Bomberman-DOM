@@ -7,11 +7,12 @@ const gameLogic = require('./game/logic');
 
 const server = http.createServer((req, res) => {
   if (req.url === '/') {
+    // const filePath =["..","frontend","index.html"].join("/")
     const filePath = path.join(__dirname, '..', 'frontend', 'index.html'); 
     fs.readFile(filePath, 'utf-8', (err, data) => {
       if (err) {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Server Error');
+        res.end('Server trmto Error');
       } else {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(data);
