@@ -1,16 +1,16 @@
 import { updateStore, getStoreState } from '../store/store.js';
 
 let socket = null;
-
 export function initSocket() {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const protocol = 'ws:';
   const host = window.location.host;
   socket = new WebSocket(`${protocol}//${host}`);
 
   socket.onopen = () => {
     console.log('Connected to WebSocket server');
+    window.socket = socket;
   };
-
+  socket.addEventListener("message", (e) => {e.data})
   socket.onmessage = (event) => {
     let message;
     try {
@@ -227,6 +227,8 @@ export function initSocket() {
       case 'chatMessage': {
         const state = getStoreState();
         let messages = [...state.chatMessages, payload];
+        console.log(messages.length)
+        console.log(messages)
         if (messages.length > 50) {
           messages = messages.slice(-50);
         }
